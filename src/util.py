@@ -43,4 +43,12 @@ def biggestValue(a, b):
     else:
         return b
 
+def radialBasisFunction(X, center):
+    if (len(X) != len(center)):
+        raise Exception("The dimension of the two input vectors is not the same")
 
+    res = 0.
+    for dim in xrange(len(X)):
+        res += (X[dim] - center[dim]) **2
+
+    return math.exp(res/2.)

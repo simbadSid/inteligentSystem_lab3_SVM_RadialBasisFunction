@@ -8,14 +8,15 @@ from cupshelpers.ppds import normalize
 
 
 
-def plotSampleAndDiscriminant(pbInstance):
-    positiveSample = pbInstance.getPositiveSample()
-    negativeSample = pbInstance.getNegativeSample()
-    plt.plot(positiveSample[0], positiveSample[1], '+', color='red',  label='Positive samples', mew=5, ms=10)
-    plt.plot(negativeSample[0], negativeSample[1], '_', color='blue',  label='Negative samples', mew=5, ms=10)
+def plotSample(pbInstance, falseClassified):
+    positiveSample  = pbInstance.getSampleFeature(sampleValue=1)
+    negativeSample  = pbInstance.getSampleFeature(sampleValue=-1)
+    SVM             = pbInstance.getSVM()
 
-    print positiveSample[1]
-    print negativeSample[1]
+    plt.plot(positiveSample[0], positiveSample[1],  '+', color='red',   label='Positive samples', mew=2, ms=10)
+    plt.plot(negativeSample[0], negativeSample[1],  '_', color='blue',  label='Negative samples', mew=2, ms=10)
+    plt.plot(SVM[0],            SVM[1],             '*', color='cyan',  label='Svm', ms=10)
+    plt.plot(falseClassified[0], falseClassified[1], '^', color='black',  label='False classified')
 
     plt.plot(-1, -1)
     plt.plot(10, 10)
@@ -31,7 +32,13 @@ if __name__ == "__main__":
     pbInstance.parseProblemInstance(normalizeData=False)
 
     plt.figure()
-    plotSampleAndDiscriminant(pbInstance)
+    fc = [[] for d in xrange(pbInstance.getFeatureDimension())]
+    isSeparable = pbInstance.isSeparableTrainingData(0, falseClassified=fc)
+    if (isSeparable == True):
+        print "The samples are separable"
+    else:
+        print "The samples are not separable.  The wrong classified points are:"
+    plotSample(pbInstance, fc)
 
 
 
